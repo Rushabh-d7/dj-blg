@@ -4,8 +4,24 @@
 {% block title %}Create Blog{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>Create a New Blog Post</h2>
+
+<header class="masthead">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class=" col-md-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    
+                    <h3 class=" site-heading my-4 mt-3 text-white"> Welcome, {{ user.username }} </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div class="container" style="flex-direction: column; max-width: 1150px; margin-left: 490px;">
+    <h2 style="padding-top: 20px;">Create a New Blog Post</h2>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}

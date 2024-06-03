@@ -20,7 +20,7 @@
 </header>
 
 
-<div class="container">
+<div class="container" style="flex-direction: column; max-width: 1150px; margin-left: 475px;">
     <div class="row">
         <div class="col-md-10 mt-5 center">
             <div class="card mb-4">
@@ -28,7 +28,7 @@
                     <h2 class="card-title">{{ post.title }}</h2>
                     <p class="card-text text-muted h6">Author: {{ post.author }}</p>
                     <p class="card-text text-muted h6">Created On: {{ post.created_on }}</p>
-                    <p class="card-text">{{post.content|slice:":400" }}</p>
+                    <p class="card-text" style="font-size: larger;">{{post.content|slice:":400" }}</p>
                     <a href="/blog" class="btn btn-primary">Home</a>
                 </div>
             </div>
@@ -49,7 +49,7 @@
             </div>
 
             {% if user.is_authenticated %}
-            <h3>Add a Comment</h3>
+            <h3 style="padding-top: 20px; padding-bottom: 5px;">Add a Comment</h3>
             <form method="post">
                 {% csrf_token %}
                 {{ form.as_p }}
