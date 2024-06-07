@@ -30,19 +30,19 @@
                     <p class="card-text text-muted h6">Created On: {{ post.created_on }}</p>
                     <p class="card-text" style="font-size: larger;">{{post.content|slice:":400" }}</p>
                     <a href="/blog" class="btn btn-primary">Home</a>
+                    {% if user == post.author %}
+                    <form method="post" action="{% url 'delete_post' post.slug %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete Post</button>
+                    </form>
+                    {% endif %}
                 </div>
             </div>
 
             <h3>Comments</h3>
             <div>
                 {% for comment in comments %}
-                <div class="card mb-2">
-                    <div class="card-body">
-                        <p class="card-text"><strong>{{ comment.author }}</strong> said:</p>
-                        <p class="card-text">{{ comment.content }}</p>
-                        <p class="card-text text-muted">{{ comment.created_on|date:"M d, Y H:i" }}</p>
-                    </div>
-                </div>
+                    {% include 'blog/comment.html' with comment=comment %}
                 {% empty %}
                 <p>No comments yet.</p>
                 {% endfor %}

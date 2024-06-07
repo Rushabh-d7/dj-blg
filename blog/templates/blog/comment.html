@@ -1,0 +1,37 @@
+<div class="card mb-2">
+    <div class="card-body">
+        <p class="card-text"><strong>{{ comment.author }}</strong> said:</p>
+        <p class="card-text">{{ comment.content }}</p>
+        <p class="card-text text-muted">{{ comment.created_on|date:"M d, Y H:i" }}</p>
+        {% if user == comment.author %}
+        <form method="post" action="{% url 'delete_comment' comment.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete Comment</button>
+        </form>
+        {% endif %}
+
+
+        <button class="btn btn-link reply" data-id="{{ comment.id }}">Reply</button>
+
+        {% for reply in comment.get_replies %}
+            <div class="ml-4">
+                {% include 'blog/comment.html' with comment=reply %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<form method="post" class="reply-form" id="reply-form-{{ comment.id }}" style="display:none;">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" name="parent" value="{{ comment.id }}">
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<script>
+    document.querySelectorAll('.reply').forEach(button => {
+        button.addEventListener('click', function() {
+            document.getElementById('reply-form-' + this.getAttribute('data-id')).style.display = 'block';
+        });
+    });
+</script>

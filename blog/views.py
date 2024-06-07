@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect,get_object_or_404
-from django.views import generic
+from django.views import generic, View
 from django.utils.text import slugify
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -18,7 +18,7 @@ class PostDetail(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = CommentForm()
-        context['comments'] = self.object.comments.all()
+        context['comments'] = self.object.comments.filter(parent__isnull=True)
         return context
 
     def post(self, request, *args, **kwargs):
@@ -54,3 +54,20 @@ class CreatePost(generic.View):
             post.save()
             return redirect('home')
         return render(request, self.template_name, {'form': form})
+
+
+@method_decorator(login_required, name='dispatch')
+class DeletePost(View):
+    def post(self, request, slug):
+        post = get_object_or_404(Post, slug=slug)
+        if post.author == request.user:
+            post.delete()
+        return redirect('home')
+
+@method_decorator(login_required, name='dispatch')
+class DeleteComment(View):
+    def post(self, request, pk):
+        comment = get_object_or_404(Comment, pk=pk)
+        if comment.author == request.user:
+            comment.delete()
+        return redirect('post_detail', slug=comment.post.slug)
