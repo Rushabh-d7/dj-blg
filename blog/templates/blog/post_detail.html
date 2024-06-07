@@ -1,24 +1,21 @@
 {% extends "blog/blogs_base.html" %}
-
+{% load custom_filters %}
 
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
-
 <header class="masthead">
     <div class="overlay"></div>
     <div class="container">
         <div class="row">
             <div class=" col-md-8 col-md-10 mx-auto">
                 <div class="site-heading">
-                    
                     <h3 class=" site-heading my-4 mt-3 text-white"> Welcome, {{ user.username }} </h3>
                 </div>
             </div>
         </div>
     </div>
 </header>
-
 
 <div class="container" style="flex-direction: column; max-width: 1150px; margin-left: 475px;">
     <div class="row">
@@ -28,7 +25,28 @@
                     <h2 class="card-title">{{ post.title }}</h2>
                     <p class="card-text text-muted h6">Author: {{ post.author }}</p>
                     <p class="card-text text-muted h6">Created On: {{ post.created_on }}</p>
-                    <p class="card-text" style="font-size: larger;">{{post.content|slice:":400" }}</p>
+                    <p class="card-text" style="font-size: larger;">{{ post.content|slice:":400" }}</p>
+
+                    {% if post.media %}
+                    <div>
+                        {% with post.media.url as media_url %}
+                            {% if media_url|endswith:".jpg" or media_url|endswith:".jpeg" or media_url|endswith:".png" or media_url|endswith:".webp" %}
+                            <img src="{{ media_url }}" alt="Post Media" class="img-fluid">
+                            {% elif media_url|endswith:".mp4" or media_url|endswith:".webm" or media_url|endswith:".ogg" %}
+                            <video controls>
+                                <source src="{{ media_url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            {% elif media_url|endswith:".mp3" or media_url|endswith:".wav" %}
+                            <audio controls>
+                                <source src="{{ media_url }}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    {% endif %}
+
                     <a href="/blog" class="btn btn-primary">Home</a>
                     {% if user == post.author %}
                     <form method="post" action="{% url 'delete_post' post.slug %}">
@@ -50,7 +68,7 @@
 
             {% if user.is_authenticated %}
             <h3 style="padding-top: 20px; padding-bottom: 5px;">Add a Comment</h3>
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-primary">Submit</button>

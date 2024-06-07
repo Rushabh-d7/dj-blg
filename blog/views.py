@@ -26,7 +26,7 @@ class PostDetail(generic.DetailView):
             return redirect('login')
         
         self.object = self.get_object()
-        form = CommentForm(request.POST)
+        form = CommentForm(request.POST, request.FILES)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.post = self.object
@@ -46,7 +46,7 @@ class CreatePost(generic.View):
         return render(request, self.template_name, {'form': form})
 
     def post(self, request):
-        form = self.form_class(request.POST)
+        form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user

@@ -9,6 +9,7 @@ class Post(models.Model):
     updated_on = models.DateTimeField(auto_now= True)
     content = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
+    media = models.FileField(upload_to='post_media/', blank=True, null=True)
     
     class Meta:
         ordering = ['-created_on']
@@ -22,6 +23,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
+    media = models.FileField(upload_to='comment_media/', blank=True, null=True)
     
     class Meta:
         ordering = ['-created_on']

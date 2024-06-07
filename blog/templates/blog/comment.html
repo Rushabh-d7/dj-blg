@@ -1,15 +1,37 @@
+{% load custom_filters %}
+
 <div class="card mb-2">
     <div class="card-body">
         <p class="card-text"><strong>{{ comment.author }}</strong> said:</p>
         <p class="card-text">{{ comment.content }}</p>
         <p class="card-text text-muted">{{ comment.created_on|date:"M d, Y H:i" }}</p>
+
+        {% if comment.media %}
+        <div>
+            {% with comment.media.url as media_url %}
+                {% if media_url|endswith:".jpg" or media_url|endswith:".jpeg" or media_url|endswith:".png" or media_url|endswith:".webp" %}
+                <img src="{{ media_url }}" alt="Comment Media" class="img-fluid">
+                {% elif media_url|endswith:".mp4" or media_url|endswith:".webm" or media_url|endswith:".ogg" %}
+                <video controls>
+                    <source src="{{ media_url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                {% elif media_url|endswith:".mp3" or media_url|endswith:".wav" %}
+                <audio controls>
+                    <source src="{{ media_url }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                {% endif %}
+            {% endwith %}
+        </div>
+        {% endif %}
+
         {% if user == comment.author %}
         <form method="post" action="{% url 'delete_comment' comment.pk %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">Delete Comment</button>
         </form>
         {% endif %}
-
 
         <button class="btn btn-link reply" data-id="{{ comment.id }}">Reply</button>
 
@@ -21,7 +43,7 @@
     </div>
 </div>
 
-<form method="post" class="reply-form" id="reply-form-{{ comment.id }}" style="display:none;">
+<form method="post" class="reply-form" id="reply-form-{{ comment.id }}" style="display:none;" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
     <input type="hidden" name="parent" value="{{ comment.id }}">
