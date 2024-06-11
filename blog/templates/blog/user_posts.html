@@ -1,0 +1,39 @@
+{% extends "blog/blogs_base.html" %}
+
+{% block title %}Posts by {{ user.username }}{% endblock %}
+
+{% block content %}
+
+
+<header class="masthead">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class=" col-md-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    
+                    <h3 class=" site-heading my-4 mt-3 text-white">Posts by {{ user.username }} </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div class="container" style="display: flex; flex-direction: row; max-width: 900px;">
+    <div class="row">
+        {% for post in posts %}
+        <div class="col-md-8 mt-3 center">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">{{ post.title }}</h2>
+                    <p class="card-text text-muted h6">{{ post.author }} | {{ post.created_on|date:"M d, Y" }} </p>
+                    <p class="card-text">{{post.content|slice:":200" }}</p>
+                    <a href="{% url 'post_detail' post.slug %}" class="btn btn-primary">Read More &rarr;</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

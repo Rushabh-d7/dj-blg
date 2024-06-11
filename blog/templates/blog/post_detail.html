@@ -23,7 +23,7 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <h2 class="card-title">{{ post.title }}</h2>
-                    <p class="card-text text-muted h6">Author: {{ post.author }}</p>
+                    <a class="card-text text-muted h6" href="{% url 'user_posts' user.username %}">Author: {{ post.author }}</a>
                     <p class="card-text text-muted h6">Created On: {{ post.created_on }}</p>
                     <p class="card-text" style="font-size: larger;">{{ post.content|slice:":400" }}</p>
 
@@ -47,13 +47,26 @@
                     </div>
                     {% endif %}
 
-                    <a href="/blog" class="btn btn-primary">Home</a>
-                    {% if user == post.author %}
-                    <form method="post" action="{% url 'delete_post' post.slug %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Delete Post</button>
-                    </form>
-                    {% endif %}
+                    <div style="display: flex;">
+                        <a href="/blog" class="btn btn-primary" style="height:fit-content;">Home</a>
+                        {% if user == post.author %}
+                        <form method="post" action="{% url 'delete_post' post.slug %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete Post</button>
+                        </form>
+                        {% endif %}
+
+                        <div>
+                            <form method="post" action="{% url 'like_post' post.slug %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn {% if liked %}btn-danger{% else %}btn-secondary{% endif %}">
+                                    {% if liked %}Unlike{% else %}Like{% endif %}
+                                </button>
+                            </form>
+                            <p>{{ post.total_likes }} likes</p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 

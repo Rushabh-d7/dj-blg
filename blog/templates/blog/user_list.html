@@ -1,0 +1,33 @@
+{% extends "blog/blogs_base.html" %}
+
+{% block title %}All Users{% endblock %}
+
+{% block content %}
+
+
+<header class="masthead">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class=" col-md-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    
+                    <h3 class=" site-heading my-4 mt-3 text-white"> Welcome, {{ user.username }} </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div class="container">
+    <h2 style="margin: 20px; padding-left: 100px;">All Users</h2>
+    <ul class="list-group" style="max-width: 1000px; padding-left: 100px;">
+        {% for user in users %}
+        <li class="list-group-item">
+            <a href="{% url 'user_posts' user.username %}">{{ user.username }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

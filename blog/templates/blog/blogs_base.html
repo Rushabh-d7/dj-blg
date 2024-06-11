@@ -48,11 +48,12 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
+                    <a class="nav-link text-black font-weight-bold" href="{% url 'user_list' %}">Users</a>
                     {% if user.is_authenticated %}
                     <li class="nav-item text-black">
                         <a class="nav-link text-black font-weight-bold" href="{% url 'create_blog' %}">Create Blog</a>
                     </li>
-                    <li class="nav-item text-black">
+                    <li class="nav-item text-black font-weight-bold">
                         <form method="post" action="{% url 'logout' %}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-link nav-link text-black font-weight-bold">Logout</button>
@@ -66,6 +67,7 @@
                         <a class="nav-link text-black font-weight-bold" href="{% url 'register' %}">Register</a>
                     </li>
                     {% endif %}
+                    
                 </ul>
             </div>
         </div>

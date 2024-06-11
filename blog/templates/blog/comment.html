@@ -2,7 +2,7 @@
 
 <div class="card mb-2">
     <div class="card-body">
-        <p class="card-text"><strong>{{ comment.author }}</strong> said:</p>
+        <a class="card-text h6" style="color: black;" href="{% url 'user_posts' user.username %}"><strong>{{ comment.author }}</strong> said:</a>
         <p class="card-text">{{ comment.content }}</p>
         <p class="card-text text-muted">{{ comment.created_on|date:"M d, Y H:i" }}</p>
 

@@ -3,8 +3,9 @@ from django.views import generic, View
 from django.utils.text import slugify
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from .models import Post, Comment
+from .models import Post, Comment, Like
 from .forms import BlogForm, CommentForm
+from django.contrib.auth.models import User
 
 class PostList(generic.ListView):
     queryset = Post.objects.order_by('-created_on')
@@ -19,6 +20,7 @@ class PostDetail(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context['form'] = CommentForm()
         context['comments'] = self.object.comments.filter(parent__isnull=True)
+        context['liked'] = self.object.likes.filter(user=self.request.user).exists()
         return context
 
     def post(self, request, *args, **kwargs):
@@ -34,6 +36,25 @@ class PostDetail(generic.DetailView):
             comment.save()
             return redirect('post_detail', slug=self.object.slug)
         return self.get(request, *args, **kwargs)
+
+
+class UserList(generic.ListView):
+    model = User
+    template_name = 'blog/user_list.html'
+    context_object_name = 'users'
+
+class UserPosts(generic.ListView):
+    template_name = 'blog/user_posts.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        self.user = get_object_or_404(User, username=self.kwargs['username'])
+        return Post.objects.filter(author=self.user).order_by('-created_on')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.user
+        return context
 
 
 @method_decorator(login_required, name='dispatch')
@@ -71,3 +92,12 @@ class DeleteComment(View):
         if comment.author == request.user:
             comment.delete()
         return redirect('post_detail', slug=comment.post.slug)
+
+
+@login_required
+def like_post(request, slug):
+    post = get_object_or_404(Post, slug=slug)
+    like, created = Like.objects.get_or_create(post=post, user=request.user)
+    if not created:
+        like.delete()
+    return redirect('post_detail', slug=slug)

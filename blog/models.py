@@ -17,6 +17,11 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def total_likes(self):
+        return self.likes.count()
+
+
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
@@ -33,3 +38,13 @@ class Comment(models.Model):
 
     def get_replies(self):
         return Comment.objects.filter(parent=self).order_by('created_on')
+
+class Like(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('post', 'user')
+
+    def __str__(self):
+        return f'{self.user} likes {self.post}'
